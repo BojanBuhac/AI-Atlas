@@ -167,6 +167,23 @@
   .mobile-legend-items>div{display:flex;align-items:center;gap:9px}
   .mobile-legend-items .swatch{flex:0 0 9px;width:9px;height:9px}
 }
+
+/* Mobile-first disclosure: existing style/layer elements stay in the same DOM. */
+.mobile-map-toggle{display:none}
+@media(max-width:650px){
+  .panel{z-index:28!important;max-height:calc(100dvh - 170px);overflow-y:auto;overscroll-behavior:contain}
+  .mobile-map-toggle{display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:6px 3px;color:#e6f6ff;background:transparent;border:0;text-align:left;font:700 12px 'Space Grotesk',sans-serif;cursor:pointer;min-height:30px}
+  .mobile-map-toggle:focus-visible{outline:2px solid #6de5d9;outline-offset:2px;border-radius:5px}
+  .mobile-map-chevron{font-size:15px;transition:transform .16s ease}
+  .panel.is-open .mobile-map-chevron{transform:rotate(180deg)}
+  .panel:not(.is-open) .panel-inner{display:none}
+  .panel.is-open .panel-inner{display:block;padding-top:5px}
+  .panel .mobile-map-legend{display:block!important;margin-top:12px;border-top:1px solid #385269;padding-top:12px}
+  .panel .mobile-map-legend .section-title{margin:0 0 9px}
+  .panel .mobile-legend-items{display:grid;gap:9px}
+  .panel .mobile-legend-items>div{display:flex;align-items:center;gap:9px}
+  .panel .mobile-legend-items .swatch{flex:0 0 9px;width:9px;height:9px}
+}
 </style>
 </head>
 <body>
@@ -174,7 +191,7 @@
 <div id="globe" aria-label="Interactive 3D Earth showing country borders and customer companies"></div><div class="vignette"></div>
 <header class="top"><div class="brand"><div class="logo">◎</div><div><h1>AI Atlas<span style="color:#6bdfd5">.</span></h1><p>Explore our world</p></div></div><div class="search-wrap"><span class="search-icon">⌕</span><input id="search" class="search" type="search" placeholder="Search companies or countries..." autocomplete="off" aria-label="Search companies or countries"><div id="results" class="results"></div></div></header>
 <section class="left"><div class="eyebrow">Global AI intelligence</div><div class="hero-title">One planet.<br>Endless strategies.</div><div class="hero-sub">Explore how the world’s largest companies are transforming with AI. Discover real-world initiatives, reported impact, and strategic priorities.</div><div class="atlas-coverage">500 companies <span aria-hidden="true">·</span> 60 AI profiles</div><div class="legend"><div><i class="swatch" style="background:#ffbe73;box-shadow:0 0 12px #ffbe73"></i> Companies</div><div><i class="swatch border"></i> Country borders</div><div><i class="swatch selected"></i> Selected company</div><div><i class="swatch" style="background:#9d8aff;box-shadow:0 0 9px #9d8aff"></i> AI-researched</div></div></section>
-<section class="panel"><div class="section-title">Map style</div><select id="styleSelect" class="style-select" aria-label="Choose map style"><option value="satellite">Satellite imagery</option><option value="streets">Street map</option></select><div id="imageryStatus" class="map-hint">Satellite tiles sharpen as you zoom in, where imagery is available.</div><div class="section-title">Map layers</div><div class="toggles"><div class="toggle"><span>Borders</span><button id="borders" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>Companies</span><button id="companies" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>AI researched only</span><button id="aiOnly" class="switch" role="switch" aria-checked="false"></button></div><div class="toggle"><span>Auto-rotate</span><button id="rotate" class="switch" role="switch" aria-checked="false"></button></div></div><details class="mobile-map-legend"><summary>Map legend <span aria-hidden="true">▾</span></summary><div class="mobile-legend-items"><div><i class="swatch" style="background:#ffbe73;box-shadow:0 0 12px #ffbe73"></i> Companies</div><div><i class="swatch border"></i> Country borders</div><div><i class="swatch selected"></i> Selected company</div><div><i class="swatch" style="background:#9d8aff;box-shadow:0 0 9px #9d8aff"></i> AI-researched</div></div></details></section>
+<section class="panel" id="mapControlPanel"><button type="button" class="mobile-map-toggle" id="mobileMapToggle" aria-controls="mapControlBody" aria-expanded="false"><span>Map controls</span><span class="mobile-map-chevron" aria-hidden="true">▾</span></button><div class="panel-inner" id="mapControlBody"><div class="section-title">Map style</div><select id="styleSelect" class="style-select" aria-label="Choose map style"><option value="satellite">Satellite imagery</option><option value="streets">Street map</option></select><div id="imageryStatus" class="map-hint">Satellite tiles sharpen as you zoom in, where imagery is available.</div><div class="section-title">Map layers</div><div class="toggles"><div class="toggle"><span>Borders</span><button id="borders" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>Companies</span><button id="companies" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>AI researched only</span><button id="aiOnly" class="switch" role="switch" aria-checked="false"></button></div><div class="toggle"><span>Auto-rotate</span><button id="rotate" class="switch" role="switch" aria-checked="false"></button></div></div><div class="mobile-map-legend"><div class="section-title">Legend</div><div class="mobile-legend-items"><div><i class="swatch" style="background:#ffbe73;box-shadow:0 0 12px #ffbe73"></i> Companies</div><div><i class="swatch border"></i> Country borders</div><div><i class="swatch selected"></i> Selected company</div><div><i class="swatch" style="background:#9d8aff;box-shadow:0 0 9px #9d8aff"></i> AI-researched</div></div></div></div></section>
 <aside class="right"><div id="detail" class="detail" hidden><div class="detail-head"><div class="eyebrow">Country profile</div><button class="close" id="close" aria-label="Close details">×</button></div><div class="flag" id="flag"></div><h2 id="countryName"></h2><div class="region" id="region"></div><div class="stat"><div class="stat-label">Capital</div><div class="stat-value" id="capitalName"></div></div><div class="stat"><div class="stat-label">Population (reference data)</div><div class="stat-value" id="population"></div></div><div class="stat"><div class="stat-label">Area</div><div class="stat-value" id="area"></div></div></div><div id="companyDetail" class="detail" hidden style="margin-top:10px;max-height:57vh;overflow:auto"></div></aside>
 <div class="zoom"><button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button><button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button><button id="reset" title="Reset view" aria-label="Reset view" style="font-size:19px">↺</button></div>
 <div class="attribution" id="attribution">Imagery © Esri, Maxar, Earthstar Geographics, and contributors</div><div class="hint">Drag to rotate &nbsp;·&nbsp; Scroll to zoom<br>Click a company to explore</div><div class="footer" id="status">Loading interactive globe…</div><div class="loading" id="loading">Preparing your world<small>Preparing the 3D view…</small></div>
@@ -485,4 +502,15 @@ function bind(){
  document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))$('results').classList.remove('show')});
 }
 try{init();bind();$('loading').hidden=true;}catch(e){console.error(e);$('loading').innerHTML='<span class="error">Unable to start 3D globe</span><small>'+esc(e.message)+'</small>'}
+</script><script>
+/* Keep map styling and layers collapsed on narrow screens, expanded on desktop. */
+(function(){
+  const panel=document.getElementById('mapControlPanel');
+  const toggle=document.getElementById('mobileMapToggle');
+  if(!panel||!toggle)return;
+  toggle.addEventListener('click',function(){
+    const expanded=panel.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded',String(expanded));
+  });
+})();
 </script></body></html>
