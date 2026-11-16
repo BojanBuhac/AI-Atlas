@@ -92,7 +92,7 @@
 .company-pin .company-name{max-width:100px!important}
 .company-pin{box-shadow:0 3px 10px #000c!important}
 .city-pin-wrap{pointer-events:none}
-.cluster-pin{pointer-events:auto;position:relative;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;border:1px solid #66b8d3;background:#102d47f7;color:#eaffff;border-radius:999px;min-height:31px;padding:4px 10px;box-shadow:0 3px 12px #000b;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}
+.cluster-pin{pointer-events:auto;position:relative;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;border:1px solid #66b8d3;background:#102d47f7;color:#eaffff;border-radius:999px;min-height:31px;padding:4px 6px;box-shadow:0 3px 12px #000b;font-size:11px;font-weight:750;cursor:pointer;white-space:nowrap}
 .cluster-pin:hover,.cluster-pin:focus-visible{border-color:#80e6e1;background:#234b65}
 .cluster-pin .cluster-count{display:grid;place-items:center;background:#5ed9d0;color:#082239;width:21px;height:21px;border-radius:50%;font-size:11px}
 .cluster-pin .cluster-ai{font-size:10px;color:#cebbff}
@@ -184,14 +184,45 @@
   .panel .mobile-legend-items>div{display:flex;align-items:center;gap:9px}
   .panel .mobile-legend-items .swatch{flex:0 0 9px;width:9px;height:9px}
 }
+
+/* Floating map controls: intentionally overlap the map/intro, but stay collapsed until opened. */
+.left{position:absolute!important;top:130px!important;bottom:auto!important;left:32px!important;width:270px!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:0!important;pointer-events:none!important;background:none!important}
+.left:before{display:none!important}
+.left .panel{position:absolute!important}
+#mapControlPanel{position:absolute!important;left:32px!important;bottom:28px!important;top:auto!important;width:292px!important;height:auto!important;max-height:calc(100dvh - 100px)!important;overflow-y:auto!important;z-index:48!important;pointer-events:auto!important;margin:0!important}
+#mapControlPanel .mobile-map-toggle{display:flex!important;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:5px 2px;background:transparent;border:0;color:#e6f6ff;font-weight:700;text-align:left}
+#mapControlPanel:not(.is-open) .panel-inner{display:none!important}
+#mapControlPanel.is-open .panel-inner{display:block!important;padding-top:10px}
+#mapControlPanel.is-open .mobile-map-chevron{transform:rotate(180deg)}
+#mapControlPanel .mobile-map-legend{display:block!important;margin-top:14px;border-top:1px solid #385269;padding-top:10px}
+#mapControlPanel .mobile-legend-items{display:grid;gap:9px}
+#mapControlPanel .mobile-legend-items>div{display:flex;align-items:center;gap:9px}
+@media(max-width:900px){.left{top:116px!important;left:20px!important;width:200px!important}#mapControlPanel{left:20px!important;bottom:20px!important;width:235px!important}}
+@media(max-width:650px){.left{display:none!important}#mapControlPanel{left:12px!important;bottom:12px!important;width:min(275px,calc(100vw - 84px))!important;max-height:calc(100dvh - 160px)!important}}
+/* Vertically exploded pins should not steal clicks from adjacent company rows. */
+.city-pin-wrap{overflow:visible!important}
+.company-pin,.cluster-pin{position:relative;pointer-events:auto}
+
+/* FIX: Globe.GL owns transforms on the root marker element. Only the nested
+   .pin-offset may be translated, otherwise all rows collapse onto each other. */
+#globe .city-pin-wrap{pointer-events:none;overflow:visible!important}
+#globe .pin-offset{position:relative;width:max-content;pointer-events:none;will-change:transform}
+#globe .pin-offset>.company-pin,#globe .pin-offset>.cluster-pin{pointer-events:auto;position:relative;transform:none!important}
+#globe .pin-offset>.company-pin{display:flex;align-items:center;white-space:nowrap}
+/* Solid floating controls. This card is intentionally above the introduction. */
+#mapControlPanel{background:#102237!important;background-image:none!important;backdrop-filter:none!important;opacity:1!important;z-index:215!important;box-shadow:0 16px 46px rgba(0,0,0,.65)!important;border:1px solid #42617b!important}
+#mapControlPanel .panel-inner{background:transparent!important}
+#mapControlPanel .mobile-map-legend{display:none!important}
+#mapControlPanel:not(.is-open){overflow:hidden!important}
+#mapControlPanel:not(.is-open) .mobile-map-toggle{padding:7px 4px!important}
 </style>
 </head>
 <body>
 <main class="app">
 <div id="globe" aria-label="Interactive 3D Earth showing country borders and customer companies"></div><div class="vignette"></div>
 <header class="top"><div class="brand"><div class="logo">◎</div><div><h1>AI Atlas<span style="color:#6bdfd5">.</span></h1><p>Explore our world</p></div></div><div class="search-wrap"><span class="search-icon">⌕</span><input id="search" class="search" type="search" placeholder="Search companies or countries..." autocomplete="off" aria-label="Search companies or countries"><div id="results" class="results"></div></div></header>
-<section class="left"><div class="eyebrow">Global AI intelligence</div><div class="hero-title">One planet.<br>Endless strategies.</div><div class="hero-sub">Explore how the world’s largest companies are transforming with AI. Discover real-world initiatives, reported impact, and strategic priorities.</div><div class="atlas-coverage">500 companies <span aria-hidden="true">·</span> 60 AI profiles</div><div class="legend"><div><i class="swatch" style="background:#ffbe73;box-shadow:0 0 12px #ffbe73"></i> Companies</div><div><i class="swatch border"></i> Country borders</div><div><i class="swatch selected"></i> Selected company</div><div><i class="swatch" style="background:#9d8aff;box-shadow:0 0 9px #9d8aff"></i> AI-researched</div></div></section>
-<section class="panel" id="mapControlPanel"><button type="button" class="mobile-map-toggle" id="mobileMapToggle" aria-controls="mapControlBody" aria-expanded="false"><span>Map controls</span><span class="mobile-map-chevron" aria-hidden="true">▾</span></button><div class="panel-inner" id="mapControlBody"><div class="section-title">Map style</div><select id="styleSelect" class="style-select" aria-label="Choose map style"><option value="satellite">Satellite imagery</option><option value="streets">Street map</option></select><div id="imageryStatus" class="map-hint">Satellite tiles sharpen as you zoom in, where imagery is available.</div><div class="section-title">Map layers</div><div class="toggles"><div class="toggle"><span>Borders</span><button id="borders" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>Companies</span><button id="companies" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>AI researched only</span><button id="aiOnly" class="switch" role="switch" aria-checked="false"></button></div><div class="toggle"><span>Auto-rotate</span><button id="rotate" class="switch" role="switch" aria-checked="false"></button></div></div><div class="mobile-map-legend"><div class="section-title">Legend</div><div class="mobile-legend-items"><div><i class="swatch" style="background:#ffbe73;box-shadow:0 0 12px #ffbe73"></i> Companies</div><div><i class="swatch border"></i> Country borders</div><div><i class="swatch selected"></i> Selected company</div><div><i class="swatch" style="background:#9d8aff;box-shadow:0 0 9px #9d8aff"></i> AI-researched</div></div></div></div></section>
+<section class="left"><div class="eyebrow">Global AI intelligence</div><div class="hero-title">One planet.<br>Endless strategies.</div><div class="hero-sub">Explore how the world’s largest companies are transforming with AI. Discover real-world initiatives, reported impact, and strategic priorities.</div><div class="atlas-coverage">500 companies <span aria-hidden="true">·</span> 60 AI profiles</div><div class="legend"><div><i class="swatch" style="background:#ffbe73;box-shadow:0 0 12px #ffbe73"></i> Companies</div><div><i class="swatch border"></i> Country borders</div><div><i class="swatch selected"></i> Selected company</div><div><i class="swatch" style="background:#9d8aff;box-shadow:0 0 9px #9d8aff"></i> AI-researched</div></div>
+<section class="panel" id="mapControlPanel"><button type="button" class="mobile-map-toggle" id="mobileMapToggle" aria-controls="mapControlBody" aria-expanded="false"><span>Map controls</span><span class="mobile-map-chevron" aria-hidden="true">▾</span></button><div class="panel-inner" id="mapControlBody"><div class="section-title">Map style</div><select id="styleSelect" class="style-select" aria-label="Choose map style"><option value="satellite">Satellite imagery</option><option value="streets">Street map</option></select><div id="imageryStatus" class="map-hint">Satellite tiles sharpen as you zoom in, where imagery is available.</div><div class="section-title">Map layers</div><div class="toggles"><div class="toggle"><span>Borders</span><button id="borders" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>Companies</span><button id="companies" class="switch active" role="switch" aria-checked="true"></button></div><div class="toggle"><span>AI researched only</span><button id="aiOnly" class="switch" role="switch" aria-checked="false"></button></div><div class="toggle"><span>Auto-rotate</span><button id="rotate" class="switch" role="switch" aria-checked="false"></button></div></div></div></section></section>
 <aside class="right"><div id="detail" class="detail" hidden><div class="detail-head"><div class="eyebrow">Country profile</div><button class="close" id="close" aria-label="Close details">×</button></div><div class="flag" id="flag"></div><h2 id="countryName"></h2><div class="region" id="region"></div><div class="stat"><div class="stat-label">Capital</div><div class="stat-value" id="capitalName"></div></div><div class="stat"><div class="stat-label">Population (reference data)</div><div class="stat-value" id="population"></div></div><div class="stat"><div class="stat-label">Area</div><div class="stat-value" id="area"></div></div></div><div id="companyDetail" class="detail" hidden style="margin-top:10px;max-height:57vh;overflow:auto"></div></aside>
 <div class="zoom"><button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button><button id="zoomOut" title="Zoom out" aria-label="Zoom out">−</button><button id="reset" title="Reset view" aria-label="Reset view" style="font-size:19px">↺</button></div>
 <div class="attribution" id="attribution">Imagery © Esri, Maxar, Earthstar Geographics, and contributors</div><div class="hint">Drag to rotate &nbsp;·&nbsp; Scroll to zoom<br>Click a company to explore</div><div class="footer" id="status">Loading interactive globe…</div><div class="loading" id="loading">Preparing your world<small>Preparing the 3D view…</small></div>
@@ -322,9 +353,9 @@ function makePin(c){
     const wrap=document.createElement('div');wrap.className='city-pin-wrap';
     const btn=document.createElement('button');btn.className='cluster-pin';
     btn.setAttribute('aria-label','Explore '+c._cluster.length+' companies in this area');
-    btn.innerHTML='<span class="cluster-count">'+c._cluster.length+'</span><span>Companies</span>'+(c._cluster.some(x=>x.ai_transformation?.stories?.length)?'<span class="cluster-ai">✦ AI</span>':'');
+    btn.innerHTML='<span class="cluster-count">'+c._cluster.length+'</span>'+(c._cluster.some(x=>x.ai_transformation?.stories?.length)?'<span class="cluster-ai" aria-label="AI research available">✦</span>':'');
     btn.addEventListener('click',e=>{e.stopPropagation();showCluster(c._cluster)});
-    wrap.append(btn);return wrap;
+    const inner=document.createElement('div');inner.className='pin-offset';inner.style.transform='translate('+(c._screenOffsetX||0)+'px,'+((c._screenOffsetY||0)-11)+'px)';inner.append(btn);wrap.append(inner);return wrap;
   }
   let b=document.createElement('button');b.className='company-pin'+(c.ai_transformation?.stories?.length?' has-ai':'');
   b.title=c.name+' · '+(c._map?.city||c.identity.country);b.setAttribute('aria-label','Show details for '+c.name);
@@ -334,7 +365,7 @@ function makePin(c){
   b.addEventListener('click',e=>{e.stopPropagation();showCompany(c,true)});
   let wrap=document.createElement('div');wrap.className='city-pin-wrap';
   const dx=c._screenOffsetX||0,dy=c._screenOffsetY||0;
-  wrap.style.transform='translate('+dx+'px,'+(dy-11)+'px)';wrap.appendChild(b);return wrap;
+  const inner=document.createElement('div');inner.className='pin-offset';inner.style.transform='translate('+dx+'px,'+(dy-11)+'px)';inner.appendChild(b);wrap.appendChild(inner);return wrap;
 }
 function showCluster(members){
   selected=null;$('detail').hidden=true;const box=$('companyDetail');box.hidden=false;
@@ -411,43 +442,61 @@ function showCompany(c,fly){
  if(globe&&fly&&c._map){globe.pointOfView({lat:c._map.lat,lng:c._map.lng,altitude:.46},850);setTimeout(()=>update(true),900)}
 }
 const angular=(a,p)=>{let la=a.lat*Math.PI/180,lb=p.lat*Math.PI/180,dl=(a.lng-p.lng)*Math.PI/180;return Math.acos(Math.max(-1,Math.min(1,Math.sin(la)*Math.sin(lb)+Math.cos(la)*Math.cos(lb)*Math.cos(dl))))*180/Math.PI};
+// Project HQ onto the canvas for collision checks; no remote dependencies.
+function pinScreenPos(c,camera){
+ const loc=c._map;if(!loc)return null;
+ if(typeof globe.getScreenCoords==='function'){
+  const p=globe.getScreenCoords(loc.lat,loc.lng,.008);
+  if(Number.isFinite(p?.x)&&Number.isFinite(p?.y))return {x:p.x,y:p.y};
+ }
+ if(typeof globe.getCoords==='function'&&typeof globe.camera==='function'){
+  try{
+   const p=globe.getCoords(loc.lat,loc.lng,.008),cam=globe.camera();
+   if(p&&cam?.position?.clone){const v=cam.position.clone();v.set(p.x,p.y,p.z);v.project(cam);
+    if(Number.isFinite(v.x)&&Number.isFinite(v.y))return {x:(v.x+1)*innerWidth/2,y:(1-v.y)*innerHeight/2};}
+  }catch(e){}
+ }
+ // Deterministic approximate fallback for older Globe.GL builds.
+ const diff=((loc.lng-camera.lng+540)%360)-180,lat=(loc.lat-camera.lat)*Math.PI/180;
+ const scale=Math.min(innerWidth,innerHeight)/(Math.max(.09,camera.altitude)*2.5);
+ return {x:innerWidth/2+diff*Math.PI/180*Math.cos(camera.lat*Math.PI/180)*scale,y:innerHeight/2-lat*scale};
+}
+// Pins must remain on their geographic anchors. No screen-space collision displacement.
+// At overview zoom a city is represented by one clickable cluster. At close zoom
+// a small number of company labels expand vertically around the SAME HQ position.
 function visiblePins(){
  if(!showCompanies||!globe)return [];
  const camera=globe.pointOfView(),alt=camera.altitude;
  const threshold=alt>1.6?88:alt>.85?72:alt>.4?56:43;
  const pool=companies.filter(c=>c._map&&(!aiOnly||c.ai_transformation?.stories?.length)&&angular(c._map,camera)<threshold);
  if(!pool.length)return [];
- // Screen-space bins are zoom-sensitive. Nearby HQ labels collapse into selectable aggregates.
- const cell=alt>1.5?118:alt>.7?102:alt>.36?92:76;
- const groups=new Map(),w=innerWidth,h=innerHeight;
- const screen=typeof globe.getScreenCoords==='function';
+ const groups=new Map();
  for(const c of pool){
-  const pos=screen?globe.getScreenCoords(c._map.lat,c._map.lng,.008):null;
-  const x=Number(pos?.x),y=Number(pos?.y);
-  const validScreen=screen&&Number.isFinite(x)&&Number.isFinite(y);
-  if(validScreen&&(x<0||x>w||y<0||y>h))continue;
-  const key=validScreen?Math.floor(x/cell)+':'+Math.floor(y/cell):Math.round(c._map.lat/(cell/10))+':'+Math.round(c._map.lng/(cell/10));
-  if(!groups.has(key))groups.set(key,[]);groups.get(key).push(c);
+  const key='hq:'+c._map.lat.toFixed(3)+':'+c._map.lng.toFixed(3);
+  if(!groups.has(key))groups.set(key,[]);
+  groups.get(key).push(c);
  }
  const result=[];
+ const expanded=alt<=.24;
  for(const group of groups.values()){
   group.sort((a,b)=>a.rank-b.rank);
-  if(group.length===1){result.push(group[0]);continue}
-  if(alt<=.31&&group.length<=6){
-   const cols=Math.min(group.length,2),rows=Math.ceil(group.length/cols);
-   group.forEach((c,i)=>result.push({...c,_screenOffsetX:(i%cols-(cols-1)/2)*126,_screenOffsetY:(Math.floor(i/cols)-(rows-1)/2)*27}));
+  if(group.length===1){result.push(group[0]);continue;}
+  // A tight, five-row vertical fan remains visibly attached to the city point.
+  // Larger groups stay a cluster: clicking shows every company in the existing list.
+  if(expanded&&group.length<=5){
+   group.forEach((c,i)=>result.push({...c,_screenOffsetX:0,_screenOffsetY:(i-(group.length-1)/2)*31}));
   }else{
-   const center=group[Math.floor(group.length/2)]._map;
-   result.push({_cluster:group,_map:{...center},rank:group[0].rank,_clusterKey:group.map(c=>c.rank).join(',')});
+   result.push({_cluster:group,_map:{...group[0]._map},rank:group[0].rank,_clusterKey:group.map(c=>c.rank).join(',')});
   }
  }
  result.sort((a,b)=>a.rank-b.rank);
- // Never overwhelm the HTML label renderer. All filtered companies remain searchable.
- return result.slice(0,alt>1.6?90:alt>.7?140:200);
+ // Do not move labels into empty screen areas. If needed, select the city cluster
+ // to access all companies without sacrificing their true geographic location.
+ return result.slice(0,alt>1.6?120:alt>.7?180:300);
 }
 function update(force=false){
  if(!globe)return;
- const p=visiblePins();const key=p.map(c=>c._cluster?'c'+c._clusterKey:'p'+c.rank+(c._screenOffsetX||0)).join('|');
+ const p=visiblePins();const key=p.map(c=>c._cluster?'c'+c._clusterKey+':'+(c._screenOffsetX||0)+':'+(c._screenOffsetY||0):'p'+c.rank+':'+(c._screenOffsetX||0)+':'+(c._screenOffsetY||0)).join('|');
  if(force||key!==lastPins){lastPins=key;globe.htmlElementsData(p)}
  const b=showBorders?'on':'off';
  const alt=globe.pointOfView().altitude;
@@ -506,7 +555,8 @@ try{init();bind();$('loading').hidden=true;}catch(e){console.error(e);$('loading
 /* Keep map styling and layers collapsed on narrow screens, expanded on desktop. */
 (function(){
   const panel=document.getElementById('mapControlPanel');
-  const toggle=document.getElementById('mobileMapToggle');
+   if(panel)document.querySelector('.app').appendChild(panel);
+   const toggle=document.getElementById('mobileMapToggle');
   if(!panel||!toggle)return;
   toggle.addEventListener('click',function(){
     const expanded=panel.classList.toggle('is-open');
@@ -514,3 +564,4 @@ try{init();bind();$('loading').hidden=true;}catch(e){console.error(e);$('loading
   });
 })();
 </script></body></html>
+<!-- Geographic pin anchoring patch: markers stay at headquarters coordinates. -->
